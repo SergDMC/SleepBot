@@ -24,11 +24,35 @@ namespace SleepBot.Handlers
         public async Task HandleAsync(Message message, CancellationToken cancellationToken)
         {
             var args = message.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (args.Length != 2 || !TimeSpan.TryParseExact(args[1], @"hh\:mm", CultureInfo.InvariantCulture, out var remindTime))
+
+            // Нет аргументов — сразу ошибка
+            if (args.Length != 2)
             {
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Неверный формат. Используй: /remind 23:00",
+                    text: "Неверный формат. Используй: `/remind 23:00` или `/remind off`",
+                    cancellationToken: cancellationToken);
+                return;
+            }
+
+            // Проверяем, что передали "off"
+            if (args[1].Equals("off", StringComparison.OrdinalIgnoreCase))
+            {
+                await _reminderService.RemoveRemindersAsync(message.From!.Id, cancellationToken);
+
+                await _botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: "Напоминания отключены ✅",
+                    cancellationToken: cancellationToken);
+                return;
+            }
+
+            // Иначе пытаемся распарсить время
+            if (!TimeSpan.TryParseExact(args[1], @"hh\:mm", CultureInfo.InvariantCulture, out var remindTime))
+            {
+                await _botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: "Неверный формат. Используй: `/remind 23:00` или `/remind off`",
                     cancellationToken: cancellationToken);
                 return;
             }
@@ -37,7 +61,7 @@ namespace SleepBot.Handlers
 
             await _botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"Окей! Буду напоминать тебе ложиться спать в {remindTime:hh\\:mm}",
+                text: $"Окей! Буду напоминать тебе ложиться спать в {remindTime:hh\\:mm} 💤",
                 cancellationToken: cancellationToken);
         }
     }

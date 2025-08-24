@@ -29,7 +29,7 @@ namespace SleepBot.Handlers
             {
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Неверный формат команды. Используй: /sleep 23:30 07:00",
+                    text: "Неверный формат команды. Используй: `/sleep 23:30 07:00`",
                     cancellationToken: cancellationToken);
                 return;
             }
@@ -39,7 +39,7 @@ namespace SleepBot.Handlers
             {
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Время должно быть в формате HH:mm. Пример: /sleep 23:00 07:30",
+                    text: "Время должно быть в формате HH:mm. Пример:`/sleep 23:00 07:30`",
                     cancellationToken: cancellationToken);
                 return;
             }

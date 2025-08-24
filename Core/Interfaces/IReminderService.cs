@@ -6,19 +6,22 @@ namespace SleepBot.Core.Interfaces;
 
 public interface IReminderService
 {
-    /// <summary>
-    /// Устанавливает напоминание для пользователя.
-    /// Время передается в формате HH:mm.
-    /// </summary>
+   
+    // Устанавливает напоминание для пользователя.
+    // Время передается в формате HH:mm.
+    
     Task SetReminderAsync(long userId, TimeSpan remindTime, CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Запускает фоновую задачу, которая проверяет и отправляет напоминания.
-    /// </summary>
+    // Удалить текущее напоминание о времени отхода ко сну
+    Task RemoveRemindersAsync(long userid,  CancellationToken cancellationToken);
+
+
+    // Запускает фоновую задачу, которая проверяет и отправляет напоминания.
+
     Task StartAsync(CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Останавливает фоновую задачу.
-    /// </summary>
+    
+    // Останавливает фоновую задачу.
+    
     Task StopAsync(CancellationToken cancellationToken);
 }

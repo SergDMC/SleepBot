@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Npgsql;
+
 using SleepBot.Core.Interfaces;
+using SleepBot.Infrastructure.Data;
 
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
@@ -13,18 +16,43 @@ namespace SleepBot.Infrastructure.Reminders;
 public class ReminderService : IReminderService, IDisposable
 {
     private readonly ITelegramBotClient _botClient;
-    private readonly ConcurrentDictionary<long, TimeSpan> _userReminders = new();
+    private readonly DbConnectionFactory _dbFactory;
     private Timer? _timer;
 
-    public ReminderService(ITelegramBotClient botClient)
+    public ReminderService(ITelegramBotClient botClient, DbConnectionFactory dbFactory)
     {
         _botClient = botClient;
+        _dbFactory = dbFactory;
     }
 
-    public Task SetReminderAsync(long userId, TimeSpan remindTime, CancellationToken cancellationToken)
+    public async Task SetReminderAsync(long userId, TimeSpan remindTime, CancellationToken cancellationToken)
     {
-        _userReminders.AddOrUpdate(userId, remindTime, (_, _) => remindTime);
-        return Task.CompletedTask;
+        await using var conn = _dbFactory.CreateConnection();
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = @"
+            INSERT INTO Reminders (UserId, Time)
+            VALUES (@userId, @time)
+            ON CONFLICT (UserId) DO UPDATE
+            SET Time = EXCLUDED.Time;";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("userId", userId);
+        cmd.Parameters.AddWithValue("time", remindTime);
+
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+    public async Task RemoveRemindersAsync(long userId, CancellationToken cancellationToken)
+    {
+        await using var conn = _dbFactory.CreateConnection();
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = "DELETE FROM Reminders WHERE UserId = @userId;";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("userId", userId);
+
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -41,33 +69,54 @@ public class ReminderService : IReminderService, IDisposable
 
     private async Task CheckRemindersAsync(CancellationToken cancellationToken)
     {
-        var nowUtc = DateTime.UtcNow.TimeOfDay;
+        var now = DateTime.Now.TimeOfDay; // Локальное время
+        var reminders = await GetAllRemindersAsync(cancellationToken);
 
-        foreach (var (userId, remindTime) in _userReminders)
+        foreach (var (userId, remindTime) in reminders)
         {
-            // Разрешаем "окно" в 1 минуту для срабатывания напоминания
-            if (IsTimeToRemind(remindTime, nowUtc))
+            if (IsTimeToRemind(remindTime, now))
             {
                 try
                 {
                     await _botClient.SendTextMessageAsync(
                         chatId: userId,
-                        text: $"Уже {remindTime:hh\\:mm}! Пора готовиться ко сну, чтобы выспаться. Спокойной ночи!",
-                        parseMode: ParseMode.Markdown,
+                        text: $"Уже {remindTime:hh\\:mm}! Пора готовиться ко сну. Спокойной ночи!",
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                         cancellationToken: cancellationToken);
                 }
                 catch
                 {
-                    // Логирование ошибок — можно расширить
+                    // TODO: логирование ошибок
                 }
             }
         }
     }
 
+    private async Task<List<(long UserId, TimeSpan RemindTime)>> GetAllRemindersAsync(CancellationToken cancellationToken)
+    {
+        var results = new List<(long, TimeSpan)>();
+
+        await using var conn = _dbFactory.CreateConnection();
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = "SELECT UserId, Time FROM Reminders;";
+        await using var cmd = new NpgsqlCommand(sql, conn);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var userId = reader.GetInt64(0);
+            var remindTime = reader.GetTimeSpan(1);
+            results.Add((userId, remindTime));
+        }
+
+        return results;
+    }
+
     private static bool IsTimeToRemind(TimeSpan remindTime, TimeSpan now)
     {
         var diff = (now - remindTime).TotalMinutes;
-        return diff >= 0 && diff < 1; // срабатывает в течение 1 минуты после времени
+        return diff >= 0 && diff < 1;
     }
 
     public void Dispose()
