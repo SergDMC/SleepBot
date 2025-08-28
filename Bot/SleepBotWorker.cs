@@ -50,6 +50,7 @@ public class SleepBotWorker : BackgroundService
 
         await _botClient.SetMyCommandsAsync(new[]
     {
+        new BotCommand { Command = "start", Description = "Запуск бота"},
         new BotCommand { Command = "help", Description = "Показать информацию о доступных командах" },
         new BotCommand { Command = "sleep", Description = "Записать сон" },
         new BotCommand { Command = "stats", Description = "Показать статистику" },

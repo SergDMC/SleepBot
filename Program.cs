@@ -35,6 +35,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<ICommandHandler, StatsCommandHandler>();
         services.AddScoped<ICommandHandler, RemindCommandHandler>();
         services.AddScoped<ICommandHandler, HelpCommandHandler>();
+        services.AddSingleton<ICommandHandler, StartCommandHandler>();
 
         // Background worker
         services.AddHostedService<SleepBotWorker>();
