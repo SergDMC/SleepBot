@@ -40,7 +40,7 @@ namespace SleepBot.Handlers
             {
                 await botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Неизвестная команда. Доступные команды: /sleep, /stats, /remind",
+                    text: "Неизвестная команда. Доступные команды: /sleep, /stats, /remind, /target, /settings",
                     cancellationToken: cancellationToken);
             }
         }

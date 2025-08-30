@@ -113,6 +113,23 @@ public class ReminderService : IReminderService, IDisposable
         return results;
     }
 
+    public async Task<TimeSpan?> GetByChatIdAsync(long userId, CancellationToken cancellationToken)
+    {
+        await using var conn = _dbFactory.CreateConnection();
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = "SELECT Time FROM Reminders WHERE UserId = @userId LIMIT 1;";
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("userId", userId);
+
+        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+
+        if (result == null || result == DBNull.Value)
+            return null;
+
+        return (TimeSpan)result;
+    }
+
     private static bool IsTimeToRemind(TimeSpan remindTime, TimeSpan now)
     {
         var diff = (now - remindTime).TotalMinutes;

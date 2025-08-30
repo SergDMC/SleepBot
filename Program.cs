@@ -29,6 +29,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<SleepRepository, SleepRepository>();
         services.AddScoped<ISleepService, SleepService>();
         services.AddSingleton<IReminderService, ReminderService>();
+        services.AddScoped<IUserService, UserService>();
 
         // Command Handlers
         services.AddScoped<ICommandHandler, SleepCommandHandler>();
@@ -36,6 +37,9 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<ICommandHandler, RemindCommandHandler>();
         services.AddScoped<ICommandHandler, HelpCommandHandler>();
         services.AddSingleton<ICommandHandler, StartCommandHandler>();
+        services.AddScoped<ICommandHandler, TargetCommandHandler>();
+        services.AddScoped<ICommandHandler, SettingsCommandHandler>();
+
 
         // Background worker
         services.AddHostedService<SleepBotWorker>();

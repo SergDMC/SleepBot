@@ -41,11 +41,12 @@ namespace SleepBot.Handlers
             {
                 // Новый пользователь → добавляем в БД
                 var insertCmd = new NpgsqlCommand(
-                    "INSERT INTO Users (ChatId, CreatedAt) VALUES (@chatId, @createdAt)",
+                    "INSERT INTO Users (ChatId, CreatedAt, Username) VALUES (@chatId, @createdAt, @username) ON CONFLICT (ChatId) DO UPDATE SET Username = EXCLUDED.Username;",
                     connection
                 );
                 insertCmd.Parameters.AddWithValue("chatId", chatId);
                 insertCmd.Parameters.AddWithValue("createdAt", DateTime.UtcNow);
+                insertCmd.Parameters.AddWithValue("username", (object?)message.Chat.Username ?? DBNull.Value);
 
                 await insertCmd.ExecuteNonQueryAsync(cancellationToken);
 

@@ -55,6 +55,8 @@ public class SleepBotWorker : BackgroundService
         new BotCommand { Command = "sleep", Description = "Записать сон" },
         new BotCommand { Command = "stats", Description = "Показать статистику" },
         new BotCommand { Command = "remind", Description = "Настроить напоминания" },
+        new BotCommand { Command = "target", Description = "Настроить текущую цель" },
+        new BotCommand { Command = "settings", Description = "Показать текущие настройки" },
     }, cancellationToken: stoppingToken);
 
 

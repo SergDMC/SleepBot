@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SleepBot.Infrastructure.Reminders;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +21,10 @@ public interface IReminderService
 
     Task StartAsync(CancellationToken cancellationToken);
 
-    
+    Task<TimeSpan?> GetByChatIdAsync(long userId, CancellationToken cancellationToken);
+
+
     // Останавливает фоновую задачу.
-    
+
     Task StopAsync(CancellationToken cancellationToken);
 }
