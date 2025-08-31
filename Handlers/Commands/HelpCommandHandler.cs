@@ -1,25 +1,23 @@
 ﻿using SleepBot.Core.Interfaces;
-
-
 using System.Threading;
 using System.Threading.Tasks;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class HelpCommandHandler : ICommandHandler
     {
         public string Command => "help";
 
         private readonly ITelegramBotClient _botClient;
-        
+
 
         public HelpCommandHandler(ITelegramBotClient botClient)
         {
             _botClient = botClient;
-            
+
         }
 
         public async Task HandleAsync(Message message, CancellationToken cancellationToken)
@@ -31,11 +29,15 @@ namespace SleepBot.Handlers
 
         `/sleep` – зафиксировать продолжительность сна, используй формат команды: `/sleep 23:30 07:00`
 
+        `/latest` - показать продолжительность последнего сна
+
         `/stats` – статистика сна за последние 7 дней
 
-        `/remind` – включить напоминания о времени отхода ко сну, используй формат команды: `/remind 23:00`, чтобы отключить напоминания, используй `/remind off`
+        `/remind` – включить напоминания о времени отхода ко сну, используй формат команды: `/remind 23:00`
 
-        `/target` - Установить цель по сну в часах. Формат команды `/target 8`
+        `/remind off` - отключить напоминания
+
+        `/target` - Установить цель по сну в часах. Формат команды: `/target 8`
         
         `/settings` - показать текущие настройки пользователя
 

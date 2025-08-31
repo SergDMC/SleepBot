@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using SleepBot.Core.Interfaces;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class RemindCommandHandler : ICommandHandler
     {
@@ -30,7 +30,8 @@ namespace SleepBot.Handlers
             {
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Неверный формат. Используй: `/remind 23:00` или `/remind off`",
+                    text: "Неверный формат. Используй `/remind 23:00` или `/remind off`",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken);
                 return;
             }
@@ -52,7 +53,8 @@ namespace SleepBot.Handlers
             {
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Неверный формат. Используй: `/remind 23:00` или `/remind off`",
+                    text: "Неверный формат. Используй `/remind 23:00` или `/remind off`",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken);
                 return;
             }

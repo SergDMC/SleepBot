@@ -2,12 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SleepBot.Core.Interfaces;
-using SleepBot.Core.Entities;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class SettingsCommandHandler : ICommandHandler
     {
@@ -37,7 +36,8 @@ namespace SleepBot.Handlers
             {
                 await _botClient.SendTextMessageAsync(
                     chatId,
-                    "Ты ещё не зарегистрирован. Используй /start для начала работы с ботом.",
+                    "Ты ещё не зарегистрирован. Используй `/start` для начала работы с ботом.",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken
                 );
                 return;

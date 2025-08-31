@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using SleepBot.Core.Entities;
 using SleepBot.Core.Interfaces;
@@ -27,4 +26,7 @@ public class SleepService : ISleepService
         var stats = await _repository.GetSleepStatsForLastWeekAsync(userId, cancellationToken);
         return stats;
     }
+
+    public Task<SleepSession?> GetLatestSessionAsync(long userId, CancellationToken cancellationToken)
+        => _repository.GetLatestSessionAsync(userId, cancellationToken);
 }

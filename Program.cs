@@ -4,11 +4,11 @@ using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
 using SleepBot.Bot;
 using SleepBot.Core.Interfaces;
-using SleepBot.Handlers;
 using SleepBot.Infrastructure.Data;
 using SleepBot.Infrastructure.Reminders;
 using SleepBot.Infrastructure.Services;
 using System;
+using SleepBot.Handlers.Commands;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((_, config) =>
@@ -32,13 +32,14 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IUserService, UserService>();
 
         // Command Handlers
+        services.AddSingleton<ICommandHandler, StartCommandHandler>();
         services.AddScoped<ICommandHandler, SleepCommandHandler>();
         services.AddScoped<ICommandHandler, StatsCommandHandler>();
         services.AddScoped<ICommandHandler, RemindCommandHandler>();
         services.AddScoped<ICommandHandler, HelpCommandHandler>();
-        services.AddSingleton<ICommandHandler, StartCommandHandler>();
         services.AddScoped<ICommandHandler, TargetCommandHandler>();
         services.AddScoped<ICommandHandler, SettingsCommandHandler>();
+        services.AddScoped<ICommandHandler, LatestCommandHandler>();
 
 
         // Background worker

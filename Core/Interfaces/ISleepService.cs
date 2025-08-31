@@ -16,4 +16,6 @@ public interface ISleepService
     /// Получает статистику сна за последнюю неделю.
     
     Task<SleepStatsDto?> GetSleepStatsAsync(long userId, CancellationToken cancellationToken);
+
+    Task<SleepSession?> GetLatestSessionAsync(long userId, CancellationToken cancellationToken);
 }

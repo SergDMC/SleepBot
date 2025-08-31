@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 using Telegram.Bot;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class TargetCommandHandler : ICommandHandler
     {

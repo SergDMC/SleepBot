@@ -53,6 +53,7 @@ public class SleepBotWorker : BackgroundService
         new BotCommand { Command = "start", Description = "Запуск бота"},
         new BotCommand { Command = "help", Description = "Показать информацию о доступных командах" },
         new BotCommand { Command = "sleep", Description = "Записать сон" },
+        new BotCommand { Command = "latest", Description = "Показать продолжительность последнего сна" },
         new BotCommand { Command = "stats", Description = "Показать статистику" },
         new BotCommand { Command = "remind", Description = "Настроить напоминания" },
         new BotCommand { Command = "target", Description = "Настроить текущую цель" },

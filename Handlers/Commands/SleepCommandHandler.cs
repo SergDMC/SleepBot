@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 using SleepBot.Core.Interfaces;
 using SleepBot.Core.Entities;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class SleepCommandHandler : ICommandHandler
     {
@@ -30,6 +30,7 @@ namespace SleepBot.Handlers
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "Неверный формат команды. Используй: `/sleep 23:30 07:00`",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken);
                 return;
             }
@@ -40,6 +41,7 @@ namespace SleepBot.Handlers
                 await _botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "Время должно быть в формате HH:mm. Пример:`/sleep 23:00 07:30`",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken);
                 return;
             }

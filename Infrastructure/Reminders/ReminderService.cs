@@ -9,7 +9,6 @@ using SleepBot.Core.Interfaces;
 using SleepBot.Infrastructure.Data;
 
 using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
 
 namespace SleepBot.Infrastructure.Reminders;
 

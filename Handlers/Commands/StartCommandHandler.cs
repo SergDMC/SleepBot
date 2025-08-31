@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Npgsql;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class StartCommandHandler : ICommandHandler
     {
@@ -53,7 +53,7 @@ namespace SleepBot.Handlers
                 await _botClient.SendTextMessageAsync(
                     chatId,
                     "👋 Привет! Я *SleepBot* – твой помощник для контроля сна.\n" +
-                    "Напиши /help, чтобы узнать, что я умею.",
+                    "Напиши `/help`, чтобы узнать, что я умею.",
                     parseMode: ParseMode.Markdown,
                     cancellationToken: cancellationToken
                 );
@@ -63,7 +63,7 @@ namespace SleepBot.Handlers
                 // Уже зарегистрирован → приветствуем снова
                 await _botClient.SendTextMessageAsync(
                     chatId,
-                    "⚡ Ты уже зарегистрирован! Напиши /help, чтобы вспомнить команды.",
+                    "⚡ Ты уже зарегистрирован! Напиши `/help`, чтобы вспомнить команды.",
                     parseMode: ParseMode.Markdown,
                     cancellationToken: cancellationToken
                 );

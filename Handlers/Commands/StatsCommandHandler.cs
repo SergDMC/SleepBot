@@ -5,7 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using SleepBot.Core.Interfaces;
 
-namespace SleepBot.Handlers
+namespace SleepBot.Handlers.Commands
 {
     public class StatsCommandHandler : ICommandHandler
     {

@@ -70,4 +70,36 @@ public class SleepRepository
             LongestDuration = maxDuration
         };
     }
+
+    public async Task<SleepSession?> GetLatestSessionAsync(long userId, CancellationToken cancellationToken)
+    {
+        await using var conn = _connectionFactory.CreateConnection();
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = @"
+            SELECT id, user_id, sleep_time, wake_time, duration, created_at
+            FROM sleep_sessions
+            WHERE user_id = @userId
+            ORDER BY created_at DESC
+            LIMIT 1;";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("userId", userId);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        if (await reader.ReadAsync(cancellationToken))
+        {
+            return new SleepSession
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                UserId = reader.GetInt64(1),
+                SleepTime = reader.GetDateTime(2),
+                WakeTime = reader.GetDateTime(3),
+                Duration = reader.GetTimeSpan(4),
+                CreatedAt = reader.GetDateTime(5)
+            };
+        }
+
+        return null;
+    }
 }
